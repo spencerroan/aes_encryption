@@ -1,9 +1,9 @@
 module CryptHelper
-  def hexdigest_to_hexstr digest
+  def self.hexdigest_to_hexstr digest
     [digest].pack('H*')
   end
 
-  def hexdigest_to_hexstr digest
+  def self.hexdigest_to_hexstr2 digest
     digest.scan(/../).map {|c|c.hex.chr}.join 
   end
 

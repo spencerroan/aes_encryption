@@ -15,7 +15,7 @@ module AESCrypt
   #:arg: key => String
   #:arg: iv => String
   #:arg: cipher_type => String
-  def AESCrypt.decrypt(encrypted_data, key, iv, cipher_type)
+  def AESCrypt.decrypt2(encrypted_data, key, iv, cipher_type)
     aes = OpenSSL::Cipher::Cipher.new(cipher_type)
     aes.decrypt
     aes.key = Base64.strict_decode64(key)
@@ -34,15 +34,15 @@ module AESCrypt
   #:arg: key => String
   #:arg: iv => String
   #:arg: cipher_type => String  
-  def AESCrypt.encrypt(data, key, iv, cipher_type, expected = nil)
+  def AESCrypt.encrypt2(data, key, iv, cipher_type, expected = nil)
     aes = OpenSSL::Cipher::Cipher.new(cipher_type)
     aes.encrypt
     aes.key = Base64.strict_decode64(key)
     aes.iv = Base64.strict_decode64(iv) if iv != nil 
-    Base64.strict_encode64(aes.update(data) + aes.final)
+    Base64.strict_encode64(aes.update(data) + aes.final).unpack('H*')
   end
 
-  def AESCrypt.encrypt2(data, key, iv, cipher_type)
+  def AESCrypt.encrypt(data, key, iv, cipher_type)
     aes = OpenSSL::Cipher::Cipher.new(cipher_type)
     aes.encrypt
     aes.key = key
@@ -50,6 +50,14 @@ module AESCrypt
     aes.update(data) + aes.final      
   end
 
+  def AESCrypt.decrypt(encrypted_data, key, iv, cipher_type)
+    aes = OpenSSL::Cipher::Cipher.new(cipher_type)
+    aes.decrypt
+    aes.key = (key)
+    aes.iv = (iv) if iv != nil
+    aes.update(encrypted_data) + aes.final  
+  end
+ 
 end
  
 
