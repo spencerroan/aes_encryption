@@ -41,6 +41,7 @@ describe AESCrypt do
     end
 
     it 'decrypts encoded' do
+      decrypted.should eq test_vector
     end
 
   end
