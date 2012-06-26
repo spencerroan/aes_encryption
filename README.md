@@ -5,6 +5,8 @@ I was doing a partner integration with open ssl. We are encrypting using AES and
 
 Our encryptions with the same data differed, so I thought I'd take a look at some known test sets. The tests are from http://www.inconteam.com/software-development/41-encryption/55-aes-test-vectors.
 
+See http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf for more information about AES.
+
 With the code I have now all of the tests encrypt and decrypt back to the original value, but the expected encrypted data does not match the expected encrypted data.
 
 
