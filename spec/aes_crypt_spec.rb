@@ -10,8 +10,15 @@ describe AESCrypt do
     let(:test_vector)           {CryptHelper.hexdigest_to_hexstr(_test_vector)}
     let(:cipher_text)           {CryptHelper.hexdigest_to_hexstr(_cipher_text)}
 
+    let(:encoded_key)                  {Base64.strict_encode64(key)}
+    let(:encoded_initialization_vector){Base64.strict_encode64(initialization_vector)}
+    let(:encoded_cipher_text)          {Base64.strict_encode64(cipher_text)}
+
     let(:encrypted) {AESCrypt.encrypt(test_vector, key, initialization_vector, cipher_type)}
     let(:decrypted) {AESCrypt.decrypt(encrypted,   key, initialization_vector, cipher_type)}
+
+    let(:encrypted64) {AESCrypt.encrypt64(test_vector, encoded_key, encoded_initialization_vector, cipher_type)}
+    let(:decrypted64) {AESCrypt.decrypt64(encrypted64, encoded_key, encoded_initialization_vector, cipher_type)}
 
     it 'sub_match' do
       encrypted.should include(cipher_text)
@@ -29,37 +36,44 @@ describe AESCrypt do
       decrypted.should eq test_vector
     end
 
+    it 'encrypts encoded key and iv' do
+      encrypted64.should eq encoded_cipher_text
+    end
+
+    it 'decrypts encoded' do
+    end
+
   end
 
   key_128='2b7e151628aed2a6abf7158809cf4f3c'
   key_192='8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b'
   key_256='603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4'
 
-  context 'cbc' do
-    describe '128' do 
-      cipher_type = 'aes-128-cbc'
-      it_behaves_like 'crypt', cipher_type, key_128, '000102030405060708090A0B0C0D0E0F', '6bc1bee22e409f96e93d7e117393172a', '7649abac8119b246cee98e9b12e9197d'
-      it_behaves_like 'crypt', cipher_type, key_128, '7649ABAC8119B246CEE98E9B12E9197D', 'ae2d8a571e03ac9c9eb76fac45af8e51', '5086cb9b507219ee95db113a917678b2'
-      it_behaves_like 'crypt', cipher_type, key_128, '5086CB9B507219EE95DB113A917678B2', '30c81c46a35ce411e5fbc1191a0a52ef', '73bed6b8e3c1743b7116e69e22229516'
-      it_behaves_like 'crypt', cipher_type, key_128, '73BED6B8E3C1743B7116E69E22229516', 'f69f2445df4f9b17ad2b417be66c3710', '3ff1caa1681fac09120eca307586e1a7'
-    end
-
-    describe '192' do
-      cipher_type = 'aes-192-cbc'
-      it_behaves_like 'crypt', cipher_type, key_192, '000102030405060708090A0B0C0D0E0F', '6bc1bee22e409f96e93d7e117393172a', '4f021db243bc633d7178183a9fa071e8'
-      it_behaves_like 'crypt', cipher_type, key_192, '4F021DB243BC633D7178183A9FA071E8', 'ae2d8a571e03ac9c9eb76fac45af8e51', 'b4d9ada9ad7dedf4e5e738763f69145a'
-      it_behaves_like 'crypt', cipher_type, key_192, 'B4D9ADA9AD7DEDF4E5E738763F69145A', '30c81c46a35ce411e5fbc1191a0a52ef', '571b242012fb7ae07fa9baac3df102e0'
-      it_behaves_like 'crypt', cipher_type, key_192, '571B242012FB7AE07FA9BAAC3DF102E0', 'f69f2445df4f9b17ad2b417be66c3710', '08b0e27988598881d920a9e64f5615cd'
-    end
-
-    describe '256' do
-      cipher_type = 'aes-256-cbc'
-      it_behaves_like 'crypt', cipher_type, key_256, '000102030405060708090A0B0C0D0E0F', '6bc1bee22e409f96e93d7e117393172a', 'f58c4c04d6e5f1ba779eabfb5f7bfbd6'
-      it_behaves_like 'crypt', cipher_type, key_256, 'F58C4C04D6E5F1BA779EABFB5F7BFBD6', 'ae2d8a571e03ac9c9eb76fac45af8e51', '9cfc4e967edb808d679f777bc6702c7d'
-      it_behaves_like 'crypt', cipher_type, key_256, '9CFC4E967EDB808D679F777BC6702C7D', '30c81c46a35ce411e5fbc1191a0a52ef', '39f23369a9d9bacfa530e26304231461'
-      it_behaves_like 'crypt', cipher_type, key_256, '39F23369A9D9BACFA530E26304231461', 'f69f2445df4f9b17ad2b417be66c3710', 'b2eb05e2c39be9fcda6c19078c6a9d1b'
-    end
-  end
+#  context 'cbc' do
+#    describe '128' do 
+#      cipher_type = 'aes-128-cbc'
+#      it_behaves_like 'crypt', cipher_type, key_128, '000102030405060708090A0B0C0D0E0F', '6bc1bee22e409f96e93d7e117393172a', '7649abac8119b246cee98e9b12e9197d'
+#      it_behaves_like 'crypt', cipher_type, key_128, '7649ABAC8119B246CEE98E9B12E9197D', 'ae2d8a571e03ac9c9eb76fac45af8e51', '5086cb9b507219ee95db113a917678b2'
+#      it_behaves_like 'crypt', cipher_type, key_128, '5086CB9B507219EE95DB113A917678B2', '30c81c46a35ce411e5fbc1191a0a52ef', '73bed6b8e3c1743b7116e69e22229516'
+#      it_behaves_like 'crypt', cipher_type, key_128, '73BED6B8E3C1743B7116E69E22229516', 'f69f2445df4f9b17ad2b417be66c3710', '3ff1caa1681fac09120eca307586e1a7'
+#    end
+#
+#    describe '192' do
+#      cipher_type = 'aes-192-cbc'
+#      it_behaves_like 'crypt', cipher_type, key_192, '000102030405060708090A0B0C0D0E0F', '6bc1bee22e409f96e93d7e117393172a', '4f021db243bc633d7178183a9fa071e8'
+#      it_behaves_like 'crypt', cipher_type, key_192, '4F021DB243BC633D7178183A9FA071E8', 'ae2d8a571e03ac9c9eb76fac45af8e51', 'b4d9ada9ad7dedf4e5e738763f69145a'
+#      it_behaves_like 'crypt', cipher_type, key_192, 'B4D9ADA9AD7DEDF4E5E738763F69145A', '30c81c46a35ce411e5fbc1191a0a52ef', '571b242012fb7ae07fa9baac3df102e0'
+#      it_behaves_like 'crypt', cipher_type, key_192, '571B242012FB7AE07FA9BAAC3DF102E0', 'f69f2445df4f9b17ad2b417be66c3710', '08b0e27988598881d920a9e64f5615cd'
+#    end
+#
+#    describe '256' do
+#      cipher_type = 'aes-256-cbc'
+#      it_behaves_like 'crypt', cipher_type, key_256, '000102030405060708090A0B0C0D0E0F', '6bc1bee22e409f96e93d7e117393172a', 'f58c4c04d6e5f1ba779eabfb5f7bfbd6'
+#      it_behaves_like 'crypt', cipher_type, key_256, 'F58C4C04D6E5F1BA779EABFB5F7BFBD6', 'ae2d8a571e03ac9c9eb76fac45af8e51', '9cfc4e967edb808d679f777bc6702c7d'
+#      it_behaves_like 'crypt', cipher_type, key_256, '9CFC4E967EDB808D679F777BC6702C7D', '30c81c46a35ce411e5fbc1191a0a52ef', '39f23369a9d9bacfa530e26304231461'
+#      it_behaves_like 'crypt', cipher_type, key_256, '39F23369A9D9BACFA530E26304231461', 'f69f2445df4f9b17ad2b417be66c3710', 'b2eb05e2c39be9fcda6c19078c6a9d1b'
+#    end
+#  end
 
   context 'cfb' do 
     describe '128' do 
@@ -140,29 +154,6 @@ describe AESCrypt do
   #    it_behaves_like 'crypt', cipher_type, key_256, ctr_initialization_vector, 'f69f2445df4f9b17ad2b417be66c3710', 'dfc9c58db67aada613c2dd08457941a6'
   #  end
   #end
-
-  describe 'simple tests' do
-    cipher_type           = 'aes-128-cbc'
-    it 'complex' do
-      key                   = Base64.strict_encode64(['2b7e151628aed2a6abf7158809cf4f3c'].pack('H*'))
-      initialization_vector = Base64.strict_encode64(['000102030405060708090A0B0C0D0E0F'].pack('H*')) 
-      test_vector           = '6bc1bee22e409f96e93d7e117393172a'
-      cipher_text           = Base64.strict_encode64(['7649abac8119b246cee98e9b12e9197d'].pack('H*'))
-
-      AESCrypt.encrypt(test_vector, key, initialization_vector, cipher_type).should eq cipher_text
-    end
-  end
-
-  context 'crazy_time' do
-      
-    key_0x                   = 0x2b7e151628aed2a6abf7158809cf4f3c
-    initialization_vector_0x = 0x000102030405060708090A0B0C0D0E0F 
-    test_vector_0x           = 0x6bc1bee22e409f96e93d7e117393172a
-    cipher_text_0x           = 0x7649abac8119b246cee98e9b12e9197d
-    #AESCrypt.encrypt2(test_vector_0x, key_0x, initialization_vector_0x, cipher_type)
-
-  end
-
 end
 
 
